@@ -5,7 +5,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nestgraphql {
+  provider               = "node node_modules/prisma-nestjs-graphql"
+  output                 = "../src/@generated/prisma-nestjs-graphql"
+  fields_Validator_from  = "class-validator"
+  fields_Validator_input = true
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String
+  password   String
+  firstName  String
+  lastName   String
+  email      String
+  telephone  String
+  cretedAt   DateTime  @default(now())
+  modifiedAt DateTime? @default(now())
 }

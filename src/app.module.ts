@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
         'subscriptions-transport-ws': true,
       },
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
