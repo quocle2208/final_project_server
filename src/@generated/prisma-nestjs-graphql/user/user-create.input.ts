@@ -1,5 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UserAddressCreateNestedManyWithoutUserInput } from '../user-address/user-address-create-nested-many-without-user.input';
+import { UserPaymentCreateNestedManyWithoutUserInput } from '../user-payment/user-payment-create-nested-many-without-user.input';
 
 @InputType()
 export class UserCreateInput {
@@ -27,4 +29,10 @@ export class UserCreateInput {
 
     @Field(() => Date, {nullable:true})
     modifiedAt?: Date | string;
+
+    @Field(() => UserAddressCreateNestedManyWithoutUserInput, {nullable:true})
+    userAdrses?: UserAddressCreateNestedManyWithoutUserInput;
+
+    @Field(() => UserPaymentCreateNestedManyWithoutUserInput, {nullable:true})
+    userPayments?: UserPaymentCreateNestedManyWithoutUserInput;
 }

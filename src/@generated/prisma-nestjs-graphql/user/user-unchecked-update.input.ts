@@ -4,6 +4,8 @@ import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operat
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { UserAddressUncheckedUpdateManyWithoutUserNestedInput } from '../user-address/user-address-unchecked-update-many-without-user-nested.input';
+import { UserPaymentUncheckedUpdateManyWithoutUserNestedInput } from '../user-payment/user-payment-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateInput {
@@ -34,4 +36,10 @@ export class UserUncheckedUpdateInput {
 
     @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
     modifiedAt?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => UserAddressUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    userAdrses?: UserAddressUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => UserPaymentUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    userPayments?: UserPaymentUncheckedUpdateManyWithoutUserNestedInput;
 }

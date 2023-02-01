@@ -1,6 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { UserAddressUncheckedCreateNestedManyWithoutUserInput } from '../user-address/user-address-unchecked-create-nested-many-without-user.input';
+import { UserPaymentUncheckedCreateNestedManyWithoutUserInput } from '../user-payment/user-payment-unchecked-create-nested-many-without-user.input';
 
 @InputType()
 export class UserUncheckedCreateInput {
@@ -31,4 +33,10 @@ export class UserUncheckedCreateInput {
 
     @Field(() => Date, {nullable:true})
     modifiedAt?: Date | string;
+
+    @Field(() => UserAddressUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    userAdrses?: UserAddressUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => UserPaymentUncheckedCreateNestedManyWithoutUserInput, {nullable:true})
+    userPayments?: UserPaymentUncheckedCreateNestedManyWithoutUserInput;
 }

@@ -3,6 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { UserAddressUpdateManyWithoutUserNestedInput } from '../user-address/user-address-update-many-without-user-nested.input';
+import { UserPaymentUpdateManyWithoutUserNestedInput } from '../user-payment/user-payment-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateInput {
@@ -30,4 +32,10 @@ export class UserUpdateInput {
 
     @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
     modifiedAt?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => UserAddressUpdateManyWithoutUserNestedInput, {nullable:true})
+    userAdrses?: UserAddressUpdateManyWithoutUserNestedInput;
+
+    @Field(() => UserPaymentUpdateManyWithoutUserNestedInput, {nullable:true})
+    userPayments?: UserPaymentUpdateManyWithoutUserNestedInput;
 }
