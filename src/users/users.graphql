@@ -1,8 +1,8 @@
 scalar DateTime
+
 type User {
   id: Int!
   username: String!
-  password: String!
   firstName: String!
   lastName: String!
   telephone: String!
@@ -28,7 +28,7 @@ input UpdateUserInput {
 
 type Query {
   users: [User]!
-  user(id: Int!): User
+  user(username: String!): User
 }
 
 type Mutation {
