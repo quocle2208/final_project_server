@@ -1,0 +1,22 @@
+type LoginAdminReponse {
+  access_token: String!
+  admin: Admin!
+}
+
+type Mutation {
+  loginAdmin(loginAdminInput: LoginAdminInput!): LoginReponse!
+}
+
+input LoginAdminInput {
+  username: String!
+  password: String!
+}
+
+input UserCreateInput {
+  username: String
+  password: String
+  firstName: String
+  lastName: String
+  email: String
+  telephone: String
+}

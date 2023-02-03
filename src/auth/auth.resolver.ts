@@ -4,7 +4,7 @@ import { LoginReponse, User } from 'src/grapql';
 import { UserCreateInput } from '../../src/@generated/prisma-nestjs-graphql/user/user-create.input';
 import { AuthService } from './auth.service';
 import { LoginUserInput } from './dto/login-user-input';
-import { GqlAuthGuard } from './gql-auth.guard';
+import { GqlAuthGuard } from './guards/gql-auth.guard';
 
 @Resolver('Auth')
 export class AuthResolver {
@@ -16,6 +16,7 @@ export class AuthResolver {
     @Args('loginUserInput') loginUserInput: LoginUserInput,
     @Context() context,
   ) {
+    console.log(context.user);
     return this.authService.login(context.user);
   }
   @Mutation(() => User)

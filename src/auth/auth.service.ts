@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { AdminUser, User } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserCreateInput } from 'src/@generated/prisma-nestjs-graphql/user/user-create.input';
