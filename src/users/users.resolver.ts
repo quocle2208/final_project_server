@@ -3,7 +3,6 @@ import { UsersService } from './users.service';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UserCreateInput } from 'src/@generated/prisma-nestjs-graphql/user/user-create.input';
 import { UseGuards } from '@nestjs/common';
-import { JwtAdminAuthGuard } from 'src/admin-auth/guards/jwt-admin-auth.guard';
 
 @Resolver('User')
 export class UsersResolver {
@@ -14,7 +13,6 @@ export class UsersResolver {
     return this.usersService.create(userCreateInput);
   }
 
-  @UseGuards(JwtAdminAuthGuard)
   @Query('users')
   findAll() {
     return this.usersService.findAll();
