@@ -5,7 +5,71 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nestgraphql {
+  provider               = "node node_modules/prisma-nestjs-graphql"
+  output                 = "../src/@generated/prisma-nestjs-graphql"
+  fields_Validator_from  = "class-validator"
+  fields_Validator_input = true
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id         Int      @id @default(autoincrement())
+  username   String
+  password   String
+  firstName  String
+  lastName   String
+  lastLogin  DateTime @default(now())
+  cretedAt   DateTime @default(now())
+  modifiedAt DateTime @default(now())
+  Role       Role?    @relation(fields: [roleId], references: [id])
+  roleId     Int?
+}
+
+model Role {
+  id          Int         @id @default(autoincrement())
+  roleType    String
+  permissions String
+  admins      AdminUser[]
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String
+  password     String
+  firstName    String
+  lastName     String
+  email        String
+  telephone    String
+  cretedAt     DateTime      @default(now())
+  modifiedAt   DateTime?     @default(now())
+  userAdrses   UserAddress[]
+  userPayments UserPayment[]
+}
+
+model UserAddress {
+  id         Int     @id @default(autoincrement())
+  address1   String
+  address2   String?
+  city       String
+  postalCode String?
+  country    String
+  telephone  String
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+model UserPayment {
+  id          Int    @id @default(autoincrement())
+  paymentType String
+  provider    String
+  account     Int
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
 }
