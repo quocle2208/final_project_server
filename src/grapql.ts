@@ -8,20 +8,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export class LoginAdminInput {
-    username: string;
-    password: string;
-}
-
-export class UserCreateInput {
-    username?: Nullable<string>;
-    password?: Nullable<string>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    email?: Nullable<string>;
-    telephone?: Nullable<string>;
-}
-
 export class CreateAdminInput {
     username: string;
     firstName: string;
@@ -29,11 +15,6 @@ export class CreateAdminInput {
     lastLogin?: Nullable<DateTime>;
     cretedAt?: Nullable<DateTime>;
     modifiedAt?: Nullable<DateTime>;
-}
-
-export class LoginUserInput {
-    username: string;
-    password: string;
 }
 
 export class CreateUserInput {
@@ -49,27 +30,6 @@ export class CreateUserInput {
 
 export class UpdateUserInput {
     id: number;
-}
-
-export class LoginAdminReponse {
-    access_token: string;
-    admin: Admin;
-}
-
-export abstract class IMutation {
-    abstract loginAdmin(loginAdminInput: LoginAdminInput): LoginReponse | Promise<LoginReponse>;
-
-    abstract createAdmin(createAdminInput: CreateAdminInput): Admin | Promise<Admin>;
-
-    abstract login(loginUserInput: LoginUserInput): LoginReponse | Promise<LoginReponse>;
-
-    abstract signup(signUpUserInput: UserCreateInput): User | Promise<User>;
-
-    abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
-
-    abstract updateUser(updateUserInput: UpdateUserInput): User | Promise<User>;
-
-    abstract removeUser(id: number): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export class Admin {
@@ -90,9 +50,10 @@ export abstract class IQuery {
     abstract user(username: string): Nullable<User> | Promise<Nullable<User>>;
 }
 
-export class LoginReponse {
-    access_token: string;
-    user: User;
+export abstract class IMutation {
+    abstract createAdmin(createAdminInput: CreateAdminInput): Admin | Promise<Admin>;
+
+    abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
 }
 
 export class User {

@@ -1,55 +1,103 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { AdminUser, User } from '@prisma/client';
-import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
-import { UserCreateInput } from 'src/@generated/prisma-nestjs-graphql/user/user-create.input';
+import { UsersService } from '../users/users.service';
+import RefreshToken from './entities/refresh-token.entity';
+import { sign, verify } from 'jsonwebtoken';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  private refreshTokens: RefreshToken[] = [];
 
-  async validateUser(username: string, password: string) {
-    const user = await this.userService.findOne(username);
+  constructor(private readonly userService: UsersService) {}
 
-    const valid = await bcrypt.compare(password, user.password);
-
-    if (user && valid) {
-      const { password, ...result } = user;
-      return result;
+  async refresh(refreshStr: string): Promise<string | undefined> {
+    const refreshToken = await this.retrieveRefreshToken(refreshStr);
+    if (!refreshToken) {
+      return undefined;
     }
 
-    return null;
+    const user = await this.userService.findOne(refreshToken.userId);
+    if (!user) {
+      return undefined;
+    }
+
+    const accessToken = {
+      userId: refreshToken.userId,
+    };
+
+    return sign(accessToken, process.env.ACCESS_SECRET, { expiresIn: '1h' });
   }
 
-  async login(user: User) {
+  private retrieveRefreshToken(
+    refreshStr: string,
+  ): Promise<RefreshToken | undefined> {
+    try {
+      const decoded = verify(refreshStr, process.env.REFRESH_SECRET);
+      if (typeof decoded === 'string') {
+        return undefined;
+      }
+      return Promise.resolve(
+        this.refreshTokens.find((token) => token.id === decoded.id),
+      );
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  async login(
+    email: string,
+    password: string,
+    values: { userAgent: string; ipAddress: string },
+  ): Promise<{ accessToken: string; refreshToken: string } | undefined> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      return undefined;
+    }
+    // verify your user -- use argon2 for password hashing!!
+    if (user.password !== password) {
+      return undefined;
+    }
+
+    return this.newRefreshAndAccessToken(user, values);
+  }
+
+  private async newRefreshAndAccessToken(
+    user: User,
+    values: { userAgent: string; ipAddress: string },
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const refreshObject = new RefreshToken({
+      id:
+        this.refreshTokens.length === 0
+          ? 0
+          : this.refreshTokens[this.refreshTokens.length - 1].id + 1,
+      ...values,
+      userId: user.id,
+    });
+    this.refreshTokens.push(refreshObject);
+
     return {
-      access_token: this.jwtService.sign({
-        username: user.username,
-        sub: user.id,
-      }),
-      user: user,
+      refreshToken: refreshObject.sign(),
+      accessToken: sign(
+        {
+          userId: user.id,
+        },
+        process.env.ACCESS_SECRET,
+        {
+          expiresIn: '1h',
+        },
+      ),
     };
   }
 
-  async signup(signupUserInput: UserCreateInput) {
-    const userExisting = await this.userService.findOne(
-      signupUserInput.username,
-    );
+  async logout(refreshStr): Promise<void> {
+    const refreshToken = await this.retrieveRefreshToken(refreshStr);
 
-    if (userExisting) {
-      throw new Error('Username already exists!');
+    if (!refreshToken) {
+      return;
     }
-
-    const password = await bcrypt.hash(signupUserInput.password, 10);
-
-    return this.userService.createUser({
-      ...signupUserInput,
-      username: signupUserInput.username,
-      password: password,
-    });
+    // delete refreshtoken from db
+    this.refreshTokens = this.refreshTokens.filter(
+      (refreshToken) => refreshToken.id !== refreshToken.id,
+    );
   }
 }

@@ -7,6 +7,7 @@ import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AdminModule } from './admin/admin.module';
         'subscriptions-transport-ws': true,
       },
     }),
+    ConfigModule.forRoot(),
     UsersModule,
     AuthModule,
     AdminModule,
