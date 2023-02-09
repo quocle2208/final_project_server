@@ -14,7 +14,6 @@ export class UsersResolver {
     return this.usersService.create(userCreateInput);
   }
 
-  @UseGuards(JwtAuthGuardGQL)
   @Query('users')
   findAll() {
     return this.usersService.findAll();

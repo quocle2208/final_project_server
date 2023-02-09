@@ -3,12 +3,30 @@ import { UsersService } from '../users/users.service';
 import RefreshToken from './entities/refresh-token.entity';
 import { sign, verify } from 'jsonwebtoken';
 import { User } from '@prisma/client';
+import { Auth, google } from 'googleapis';
 
 @Injectable()
 export class AuthService {
   private refreshTokens: RefreshToken[] = [];
+  private oauthClient: Auth.OAuth2Client;
 
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UsersService) {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
+  }
+
+  async loginGoogleUser(
+    token: string,
+    values: { userAgent: string; ipAddress: string },
+  ): Promise<{ accessToken: string; refreshToken: string } | undefined> {
+    const tokenInfo = await this.oauthClient.getTokenInfo(token);
+    const user = await this.userService.findByEmail(tokenInfo.email);
+    if (user) {
+      return this.newRefreshAndAccessToken(user, values);
+    }
+    return undefined;
+  }
 
   async refresh(refreshStr: string): Promise<string | undefined> {
     const refreshToken = await this.retrieveRefreshToken(refreshStr);
